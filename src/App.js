@@ -1,13 +1,26 @@
 import React from 'react';
 import { Form, Header, Container, List, Input, Segment } from 'semantic-ui-react';
+import Axios from "axios"
 
 class App extends React.Component {
   state = { name: '', todos: [], }
-  
+
+  async componentDidMount() {
+    try {
+    const res = await Axios.get(
+      `https://todo-app-jz.herokuapp.com/api/todos`
+      )
+      this.setState({todos: res.data})
+      }
+      catch (e) {
+        alert("an error ocured")
+    }
+  }
+
   handleSubmit = e => {
     e.preventDefault();
     const { name, todos, } = this.state;
-    this.setState({ todos: [name, ...todos], name: '', })
+    this.setState({ todos: [{ name, complete: false }, ...todos], name: '', })
   }
 
   render() {
@@ -24,7 +37,7 @@ class App extends React.Component {
             />
           </Form>
           <List>
-            { todos.map( (t,i) => <List.Item key={i}>{t}</List.Item> )}
+            { todos.map( (t,i) => <List.Item key={i}>{t.name}</List.Item> )}
           </List>
         </Segment>
       </Container>
